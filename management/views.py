@@ -195,8 +195,8 @@ class AddCategoryAndTopic(View):
 
     def post(self, request):
         count, already_exists = 0, 0
-        category_name = request.POST.get("category", None)
-        topic_name = request.POST.get("topic", None)
+        category_name = request.POST.get("category_name", None)
+        topic_name = request.POST.get("topic_name", None)
         if category_name:
             # category, created = Category.objects.get_or_create(name=category_name)
             # category, created = Category.objects.get_or_create(name=category_name)
@@ -207,9 +207,10 @@ class AddCategoryAndTopic(View):
             # if Question.objects.filter(question=q).first():
             if Category.objects.filter(name=category_name).first():
                 messages.warning(request, f"{category_name} category already exist")
-                return redirect("add_questions")
+                return redirect("add_category_and_topic")
 
-            category.save()
+            cat = Category(name=category)
+            cat.save()
             messages.success(
                 request,
                 f"{count} questions added to category '{category_name}'. Wait until admin verifies them.",
@@ -224,7 +225,9 @@ class AddCategoryAndTopic(View):
             if Topic.objects.filter(name=topic_name).first():
                 messages.warning(request, f"{topic} topic already exist")
 
-            topic.save()
+            topic_ = Topic(name=topic)
+
+            topic_.save()
             messages.success(
                 request,
                 f"{count} questions added to category '{topic_name}'. Wait until admin verifies them.",
@@ -232,4 +235,4 @@ class AddCategoryAndTopic(View):
         else:
             messages.warning(request, "Category name cannot be empty")
 
-        return redirect("add_questions")
+        return redirect("add_category_and_topic")
