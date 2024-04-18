@@ -105,6 +105,12 @@
                             <span class="menu-text">Add Questions</span>
                           </a>
                         </li>
+                     <li class="{% if request.resolver_match.url_name == 'add_category_and_topic' %}active current-page{% endif %}">
+                            <a href="{% url 'add_category_and_topic' %}">
+                            <i class="bi bi-calendar2"></i>
+                            <span class="menu-text">Add Category and Topic</span>
+                          </a>
+                        </li>
                         <li>
                   {% endif %}
        {% endif %}
