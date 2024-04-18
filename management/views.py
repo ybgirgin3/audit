@@ -110,7 +110,7 @@ class AddQuestion(View):
             )
         else:
             messages.warning(request, "Category name cannot be empty")
-        return redirect("quiz")
+        return redirect("add_questions")
 
 
 @method_decorator(staff_member_required, name="dispatch")
