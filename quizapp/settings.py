@@ -136,4 +136,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 LOGIN_URL = "/account/login"
 
-GLOBAL_SETTINGS = {"questions": 5}
+GLOBAL_SETTINGS = {"questions": 1}
