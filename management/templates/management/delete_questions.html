@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block title %}Manage{% endblock %}
+
+{% block body %}
+{% load static %}
+<div class="container-fluid">
+<div class="row mt-5">
+  <h1 class="text-center">
+    Delete Questions
+  </h1>
+</div>
+<div class="row mt-3">
+    <form method="post">
+        {% csrf_token %}
+        {% for question in questions %}
+            <div>
+                <label>
+                    <input type="checkbox" name="selected_questions" value="{{ question.id }}">
+                    {{ question.text }} - {{ question.category }}
+                </label>
+            </div>
+        {% endfor %}
+        <button type="submit">Seçilen Soruları Sil</button>
+    </form>
+    
+</div>
+<script src="{% static 'js/verify_question.js' %}"></script>
+{% endblock %}

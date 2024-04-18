@@ -1,0 +1,119 @@
+{% extends 'layout.html' %}
+
+{% block title %}Audit Start{% endblock %}
+
+{% block body %}
+<div class="container mt-4 my-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="{% url 'index' %}">Home</a>
+          </li>
+          <li class="breadcrumb-item active" aria-current="page">Quiz</li>
+        </ol>
+      </nav>
+ <div class="row">
+    <h2>Available Audits</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered m-0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Command</th>
+                    <th>Title</th>
+                    <th>Module</th>
+                    <th>Reporter</th>
+                    <th>Status</th>
+                    <th>Owner</th>
+                    <th>Severity</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for audit in audits %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <button class="btn btn-info btn-sm" data-counter="{{ forloop.counter }}" onclick="toggleDetails(this)">↓</button>
+                    <td><a href="{% url 'quiz:start_audit' audit.id %}">{{ audit.name }}</a></td>
+                    <td>{{ audit.module }}</td>
+                    <td>{{ audit.reporter }}</td>
+                    <td>
+                        <span class="badge {% if audit.status == 'Open' %}border-danger text-danger{% elif audit.status == 'In Progress' %}border-success text-success{% endif %}">
+                            {{ audit.status }}
+                        </span>
+                    </td>
+                    <td>{{ audit.owner }}</td>
+                    <td>
+                        <span class="badge {% if audit.severity == 'High' %}border-success text-success{% elif audit.severity == 'Low' %}border-danger text-danger{% endif %}">
+                            {{ audit.severity }}
+                        </span>
+                    </td>
+                    <td>{{ audit.created|date:"M-d, Y" }}</td>
+                    <td>{{ audit.updated|date:"M-d, Y" }}</td>
+                   
+                </tr>
+                <tr id="details-{{ forloop.counter }}" style="display:none;">
+                    <td colspan="10">
+                        <div class="audit-details">
+                            <!-- Detaylar Buraya -->
+                            <p>{{ audit.description }}</p>
+                            <!-- ... diğer detaylar ... -->
+                            <div class="comment-section">
+                                <!-- Yorum Yazma Alanı -->
+                                <textarea rows="4" placeholder="Write a comment..."></textarea>
+                                <button class="btn btn-primary btn-sm">Post</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="10">No audits available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="container">
+    {% for comment in comments %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">
+                <strong>{{ comment.result.question.content }}</strong> - Admin: {{ comment.admin.username }}
+            </h5>
+            <p class="card-text">{{ comment.comment }}</p>
+            <ul class="list-group list-group-flush">
+                {% for response in comment.userresponse_set.all %}
+                <li class="list-group-item">User {{ response.user.username }}: {{ response.response }}</li>
+                {% endfor %}
+            </ul>
+            {% if comment.result.comments_allowed and not comment.has_responded %}
+            <div class="card-footer">
+                <form method="post" class="d-flex">
+                    {% csrf_token %}
+                    <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                    <input type="text" class="form-control mr-2" name="response" placeholder="Respond here...">
+                    <button type="submit" class="btn btn-primary">Respond</button>
+                </form>
+            </div>
+            {% else %}
+            <div class="card-footer text-muted">
+                Comments are closed or already responded.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+<script>
+    function toggleDetails(button) {
+    var counter = button.getAttribute('data-counter');
+    var detailsRow = document.getElementById('details-' + counter);
+    detailsRow.style.display = detailsRow.style.display === 'none' ? 'table-row' : 'none';
+}
+</script>
+{% endblock %}

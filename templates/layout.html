@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>IncidentProof</title>
+    <!-- Meta -->
+    <meta name="description" content="IncidentProof" />
+    <meta name="author" content="IncidentProof" />
+    <link rel="canonical" href="https://www.bootstrap.gallery/">
+    <meta property="og:url" content="https://www.bootstrap.gallery">
+    <meta property="og:type" content="Website">
+    <meta property="og:site_name" content="IncidentProof">
+  {% load static %}
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="{% static 'images/favicon.svg' %}" />
+  <!-- CSS Files -->
+  <link rel="stylesheet" href="{% static 'fonts/bootstrap/bootstrap-icons.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/main.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'vendor/overlay-scroll/OverlayScrollbars.min.css' %}" />
+  <link rel="stylesheet" href="{% static 'vendor/toastify/toastify.css' %}" />
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="app-header d-flex align-items-center">
+      <!-- Left Side Toggle and Brand -->
+        <div class="d-flex">
+          <button class="toggle-sidebar" id="toggle-sidebar">
+            <i class="bi bi-list lh-1"></i>
+          </button>
+          <button class="pin-sidebar" id="pin-sidebar">
+            <i class="bi bi-list lh-1"></i>
+          </button>
+        </div>
+        <div class="app-brand py-2 ms-3">
+          <a href="{% url 'index' %}" class="d-none d-sm-block" style="text-decoration: none;">
+            <span class="logo-text" style="font-weight: bold; font-size: 24px; color: #007BFF; text-transform: uppercase; display: block; margin-top: 10px;">INCIDENTPROOF</span>
+          </a>
+        </div>
+ {% if request.user.is_authenticated %}
+      <!-- Right Side User Settings Dropdown -->
+      <div class="header-actions col">
+      <div class="dropdown ms-2">
+        <a id="userSettings" class="dropdown-toggle d-flex py-2 align-items-center text-decoration-none" href="#"
+          role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="{% static 'images/user.png' %}" class="rounded-2 img-3x" alt="Bootstrap Gallery" />
+            <span class="ms-2 text-truncate d-lg-block d-none">Aleyna Kızıltaş</span>
+          </a>
+          <div class="dropdown-menu dropdown-menu-end shadow-lg">
+          <div class="mx-3 mt-2 d-grid">
+            <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+        </div>
+        </div>
+       </div>
+        </div>
+        </div>
+                    <div class="main-container">
+                  <nav id="sidebar" class="sidebar-wrapper">
+                    <div class="shop-profile">
+                      <p class="mb-1 fw-bold text-primary">Aleyna</p>
+                      <p class="m-0">Turkey</p>
+                    </div>
+                    <div class="sidebarMenuScroll">
+                      <ul class="sidebar-menu">
+                        <li class="{% if request.resolver_match.url_name == 'index' %}active current-page{% endif %}">
+                            <a href="{% url 'index' %}">
+                            <i class="bi bi-pie-chart"></i>
+                            <span class="menu-text">Dashboard</span>
+                          </a>
+                        </li>
+                          <li class="{% if request.resolver_match.url_name == 'audits_list' %}active current-page{% endif %}">
+                            <a href="{% url 'quiz:audits_list' %}">
+                              <i class="bi bi-border-all"></i>
+                              <span class="menu-text">Denetimler</span>
+                            </a>
+                          </li>
+                          <li class="{% if request.resolver_match.url_name == 'quiz' %}active current-page{% endif %}">
+                            <a href="{% url 'quiz:quiz' %}">
+                              <i class="bi bi-calendar4"></i>
+                              <span class="menu-text">Quiz</span>
+                            </a>
+                          </li>
+                          <li class="{% if request.resolver_match.url_name == 'result' %}active current-page{% endif %}">
+                            <a href="{% url 'quiz:result' %}">
+                              <i class="bi bi-check-circle"></i>
+                              <span class="menu-text">Results</span>
+                            </a>
+                          </li>
+                 {% if request.user.is_staff %}
+                        <li class="{% if request.resolver_match.url_name == 'manage' %}active current-page{% endif %}">
+                                <a href="{% url 'manage' %}">
+                            <i class="bi bi-bar-chart-line"></i>
+                            <span class="menu-text">Manage</span>
+                          </a>
+                        </li>
+                        <li class="{% if request.resolver_match.url_name == 'setting' %}active current-page{% endif %}">
+                            <a href="{% url 'setting' %}">
+                            <i class="bi bi-box"></i>
+                            <span class="menu-text">Settings</span>
+                          </a>
+                        </li>
+                        <li class="{% if request.resolver_match.url_name == 'add_questions' %}active current-page{% endif %}">
+                            <a href="{% url 'add_questions' %}">
+                            <i class="bi bi-calendar2"></i>
+                            <span class="menu-text">Add Questions</span>
+                          </a>
+                        </li>
+                        <li>
+                  {% endif %}
+       {% endif %}
+
+                        </ul>
+                      </div>
+  </nav>
+      {% block body %}{% endblock %}
+              <div class="app-footer">
+                <div class="container">
+                  <span>© IncidentProof</span>
+                </div>
+              </div>
+            </div>
+  </div>
+
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/chart.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'js/moment.min.js' %}"></script>
+  <script src="{% static 'vendor/overlay-scroll/jquery.overlayScrollbars.min.js' %}"></script>
+  <script src="{% static 'vendor/overlay-scroll/custom-scrollbar.js' %}"></script>
+  <!-- Apex Charts -->
+  <script src="{% static 'vendor/apex/apexcharts.min.js' %}"></script>
+  <!-- Rating -->
+
+  <script src="{% static 'vendor/toastify/custom.js' %}"></script>
+  <!-- Custom JS files -->
+  <script src="{% static 'js/custom.js' %}"></script>
+  <script src="{% static 'js/todays-date.js' %}"></script>
+</body>
+</html>

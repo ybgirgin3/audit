@@ -1,0 +1,332 @@
+{% extends 'layout.html' %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
+{% load static %}
+{% block title %}Index{% endblock %}
+
+
+{% block body %}
+
+<div class="app-container">
+  <!-- App hero header starts -->
+  <div class="app-hero-header d-flex align-items-center">
+    <!-- Breadcrumb start -->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <i class="bi bi-house lh-1 pe-3 me-3 border-end border-dark"></i>
+        <a href="{% url 'index' %}" class="text-decoration-none">Home</a>
+      </li>
+      <li class="breadcrumb-item text-secondary" aria-current="page">
+        Dashboard
+      </li>
+    </ol>
+    <!-- Sales stats end -->
+
+  </div>
+</div>
+
+<div class="app-body">
+
+  <!-- Row start -->
+  <div class="row gx-3">
+    <div class="col-xl-3 col-sm-6 col-12">
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="mb-2">
+            <i class="bi bi-bar-chart fs-1 text-primary lh-1"></i>
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <h5 class="m-0 text-secondary fw-normal">Audits</h5>
+            <h3 class="m-0 text-primary">5</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="mb-2">
+            <i class="bi bi-bag-check fs-1 text-primary lh-1"></i>
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <h5 class="m-0 text-secondary fw-normal">Categories</h5>
+            <h3 class="m-0 text-primary">15</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="arrow-label">+18%</div>
+          <div class="mb-2">
+            <i class="bi bi-box-seam fs-1 text-primary lh-1"></i>
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <h5 class="m-0 text-secondary fw-normal">Opened Audit</h5>
+            <h3 class="m-0 text-primary">2</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+      <div class="card mb-3">
+        <div class="card-body">
+          <div class="mb-2">
+            <i class="bi bi-bell fs-1 text-primary lh-1"></i>
+          </div>
+          <div class="d-flex align-items-center justify-content-between">
+            <h5 class="m-0 text-secondary fw-normal">Suitability</h5>
+            <h3 class="m-0 text-primary">%15</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Row end -->
+
+  <!-- Row start -->
+  {% for audit, categories in audit_category_progress.items %}
+        <div class="row gx-3">
+            <div class="col-xxl-12">
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <!-- Dynamically display the audit name here -->
+                        <h5 class="text-primary m-0 fw-bold">{{ audit }}</h5>
+                        <button class="btn btn-outline-primary btn-sm ms-auto">
+                            Download
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row gx-3">
+                            <div class="col-xxl-12 col-sm-6">
+                                <div id="chartsContainer" class="row">
+                                    <!-- Your JavaScript will dynamically insert chart cards here -->
+                                    <!-- Each card should have a 'col-lg-6' class -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+  <!-- Row ends -->
+  <div class="row gx-3 mt-4">
+    <div class="col-lg-4">
+      <!-- Latest Exam Incorrect Answers Risk Level Overview -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <p class="text-primary m-0 fw-bold">Latest Exam Incorrect Answers Risk Level Overview</p>
+        </div>
+        <div class="card-body">
+          <canvas id="latestExamRiskLevelChart"></canvas>
+        </div>
+      </div>
+    </div>
+      <div class="col-xl-8 col-lg-6">
+        <div class="card mb-3">
+          <div class="card-header">
+            <p class="text-primary m-0 fw-bold">Areas of Definciency and Risk Levels </p>
+          </div>
+         <div class="card-body">
+          {% for result in results %}
+          {% for wa in result.wrong_answers_details %}
+            <div class="my-2 d-flex flex-column gap-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <!-- Risk level class assignment -->
+                <h6 class="{{ wa.risk_level|lower }}">
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#infoModal{{ forloop.parentloop.counter }}{{ forloop.counter }}">{{ wa.question }}</a>
+                </h6>
+                <div class="{% if wa.risk_level == 'High' %}custom-high{% elif wa.risk_level == 'Medium' %}custom-medium{% elif wa.risk_level == 'Low' %}custom-low{% else %}custom-default{% endif %}">
+                  {{ wa.risk_level }}
+                </div>
+              </div>
+              <!-- Modal -->
+              <div class="modal fade" id="infoModal{{ forloop.parentloop.counter }}{{ forloop.counter }}" tabindex="-1" aria-labelledby="infoModalLabel{{ forloop.parentloop.counter }}{{ forloop.counter }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="infoModalLabel{{ forloop.parentloop.counter }}{{ forloop.counter }}">Information: Question {{ forloop.parentloop.counter }}.{{ forloop.counter }}</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" style="padding: 20px;">
+                      {{ wa.solution }}
+                      <!-- Static image example -->
+                      <img src="{% static 'images/order.png' %}" alt="Explanation" class="img-fluid" style="max-width: 100%; height: auto; display: block; margin-left: auto; margin-right: auto;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% endfor %}
+             
+              </div>
+            </div>
+          </div>
+          <div class="container mt-5">
+            <!-- Denetim İlerlemeleri -->
+            {% for audit, categories in audit_category_progress.items %}
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="text-primary m-0 fw-bold">{{ audit }} İlerleme</h6>
+                    </div>
+                    {% for category, progresses in categories.items %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ category }}</h5>
+                            {% for progress in progresses %}
+                                <p>Başlangıç Tarihi: {{ progress.started_on }}</p> 
+                                <div class="progress" role="progressbar" style="height: 20px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                                  <div class="progress-bar bg-info" role="progressbar" style="width: {{ progress.progress }}%;" aria-valuenow="{{ progress.progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress.progress }}%</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        
+        </div>
+        </div>
+          
+      </div>
+  <!-- Additional Sections -->
+
+
+</div>
+<script src="{% static 'vendor/overlay-scroll/jquery.overlayScrollbars.min.js' %}"></script>
+<script src="{% static 'vendor/overlay-scroll/custom-scrollbar.js' %}"></script>
+
+<!-- Apex Charts -->
+<script src="{% static 'vendor/apex/apexcharts.min.js' %}"></script>
+
+
+<!-- Custom JS files -->
+
+<script>
+ document.addEventListener('DOMContentLoaded', function () {
+  var chartsContainer = document.getElementById('chartsContainer');
+  var categoryRiskCount = JSON.parse('{{ category_risk_count_json }}');
+  var labels = Object.keys(categoryRiskCount);
+
+  // Mevcut kartları temizleyin.
+  chartsContainer.innerHTML = '';
+
+  labels.forEach(function(label, index) {
+    var canvasId = 'riskLevelChart' + index;
+    var cardHtml = `
+        <div class="col-sm-6 mt-2 mb-2">
+        <div class="row g-0">
+            <div class="col-4 d-flex align-items-center justify-content-center p-2">
+                <h6 class="card-title mb-0" style="font-size: 0.9rem;">${label}</h6> <!-- Smaller title -->
+            </div>
+            <div class="col-8">
+                <div class="card-body p-2"> <!-- Reduced padding -->
+                    <canvas id="${canvasId}"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+    // Yeni oluşturulan kartı mevcut kartların sonuna ekle
+    chartsContainer.insertAdjacentHTML('beforeend', cardHtml);
+
+    var ctx = document.getElementById(canvasId).getContext('2d');
+    var data = [];
+    var backgroundColors = [];
+    var riskLevels = ['High', 'Medium', 'Low'];
+    riskLevels.forEach(function(riskLevel) {
+      data.push(categoryRiskCount[label][riskLevel] || 0);
+      // Mavi tonlarını risk seviyelerine göre atama
+      if (riskLevel === 'High') backgroundColors.push('#003366'); // Koyu Mavi
+      else if (riskLevel === 'Medium') backgroundColors.push('#336699'); // Orta Mavi
+      else backgroundColors.push('#6699CC'); // Açık Mavi
+    });
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: riskLevels,
+        datasets: [{
+          label: label + ' Risk Levels',
+          data: data,
+          backgroundColor: backgroundColors,
+        }]
+      },
+      options: {
+        indexAxis: 'y', // Yatay bar grafik için
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: label + ' Risk Levels'
+          }
+        },
+        scales: {
+          x: {
+            beginAtZero: true, // X ekseni sıfırdan başlar
+          }
+        }
+      },
+    });
+  });
+
+      // Yeni Chart için JavaScript kodu
+      var latestExamCtx = document.getElementById('latestExamRiskLevelChart').getContext('2d');
+      var latestIncorrectData = JSON.parse('{{ latest_incorrect_risk_levels_json }}');
+      var labelname = Object.keys(categoryRiskCount).pop();
+      var latestLabels = Object.keys(latestIncorrectData);
+      var latestData = Object.values(latestIncorrectData);
+      var latestBackgroundColors = latestLabels.map(label => {
+        switch(label) {
+          case 'High': return '#003366'; // Koyu Mavi
+          case 'Medium': return '#336699'; // Orta Mavi
+          case 'Low': return '#6699CC'; // Açık Mavi
+          default: return '#dddddd'; // Nötr Gri
+      }
+      });
+  
+      new Chart(latestExamCtx, {
+          type: 'bar',
+          data: {
+              labels: ['High', 'Medium', 'Low'], // Risk seviyeleri
+              datasets: [{
+                  label: labelname,
+                  data: latestData,
+                  backgroundColor: latestBackgroundColors,
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              },
+              responsive: true,
+              plugins: {
+                  legend: {
+                      position: 'top',
+                  },
+                  title: {
+                      display: true,
+                      text: 'Latest Exam Incorrect Answers Risk Level Distribution'
+                  }
+              },
+          },
+      });
+      
+    });
+  
+  </script>
+  
+  
+{% endblock %}

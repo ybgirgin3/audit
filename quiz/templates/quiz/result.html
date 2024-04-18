@@ -1,0 +1,110 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block extra_head %}
+<!-- Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
+{% endblock %}
+{% block title %}Result{% endblock %}
+
+{% block body %}
+<div class="app-body">
+
+    <!-- Container starts -->
+    <div class="container">
+
+      <!-- Row start -->
+      <div class="row">
+        <div class="col-12 col-xl-6">
+
+          <!-- Breadcrumb start -->
+          <ol class="breadcrumb mb-3">
+            <li class="breadcrumb-item">
+              <i class="icon-home lh-1"></i>
+              <a href="{% url 'index' %}" class="text-decoration-none">Home</a>
+            </li>
+            <li class="breadcrumb-item">Risk Results</li>
+            <li class="breadcrumb-item text-light">Overview</li>
+          </ol>
+          <!-- Breadcrumb end -->
+        </div>
+      </div>
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <p class="text-primary m-0 fw-bold">Exam Results Overview</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Total Questions</th>
+                                <th>Correct</th>
+                                <th>Total Marks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in results %}
+                            <tr>
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ result.total }}</td>
+                                <td>{{ result.got }}</td>
+                                <td>{{ result.got }}/{{ result.total }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Incorrect Questions Overview -->
+            <div class="card shadow mt-4">
+                <div class="card-header py-3">
+                    <h6 class="text-primary m-0 fw-bold">Incorrect Questions Overview</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Question</th>
+                                    <th>Risk Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for result in results %}
+                                    {% for wa in result.wrong_answers_details %}
+                                        <tr class="{{ wa.risk_level|lower }}">
+                                            <td>
+                                                <a href="#" data-bs-toggle="modal" data-bs-target="#infoModal{{ forloop.parentloop.counter }}{{ forloop.counter }}">{{ wa.question }}</a>
+                                            </td>
+                                            <td>{{ wa.risk_level }}</td>
+                                        </tr>
+                                        <div class="modal fade" id="infoModal{{ forloop.parentloop.counter }}{{ forloop.counter }}" tabindex="-1" aria-labelledby="infoModalLabel{{ forloop.parentloop.counter }}{{ forloop.counter }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-scrollable">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="infoModalLabel{{ forloop.parentloop.counter }}{{ forloop.counter }}">Bilgi: Soru {{ forloop.parentloop.counter }}.{{ forloop.counter }}</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                                                    </div>
+                                                    <div class="modal-body" style="padding: 20px;">
+                                                        {{ wa.solution }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="2">All questions were answered correctly.</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

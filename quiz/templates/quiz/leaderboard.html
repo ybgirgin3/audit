@@ -1,0 +1,51 @@
+{% extends 'layout.html' %}
+
+{% block title %}Leaderboard{% endblock %}
+
+{% block body %}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  {% load static %}
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i&amp;display=swap">
+  <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+  <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/bs-theme-overrides.css' %}" rel="stylesheet">
+</head>
+<div id="content">
+    <div class="container-fluid">
+        <h3 class="text-dark mb-4">Leaderboard</h3>
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <p class="text-primary m-0 fw-bold">Scores Overview</p>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Name</th>
+                                <th>Got</th>
+                                <th>Total Questions</th>
+                                <th>Total Marks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for result in results %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ result.user.username }}</td>
+                                <td>{{ result.got }}</td>
+                                <td>{{ result.total }}</td>
+                                <td>{{ result.got }}/{{ result.total }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
