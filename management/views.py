@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
-from quiz.models import Mark, Question, Category
+from quiz.models import Mark, Question, Category, Topic
 from os.path import join
 
 
@@ -180,3 +180,56 @@ class QuizDelete(View):
         return render(
             request, "management/delete_questions.html", {"questions": questions}
         )
+
+
+@method_decorator(staff_member_required, name="dispatch")
+class AddCategoryAndTopic(View):
+    def get(self, request):
+        categories = Category.objects.all()
+        topics = Topic.objects.all()
+        return render(
+            request=request,
+            template_name="management/add_topic_and_category.html",
+            context={"categories": categories, "topics": topics},
+        )
+
+    def post(self, request):
+        count, already_exists = 0, 0
+        category_name = request.POST.get("category", None)
+        topic_name = request.POST.get("topic", None)
+        if category_name:
+            # category, created = Category.objects.get_or_create(name=category_name)
+            # category, created = Category.objects.get_or_create(name=category_name)
+            # for i in range(1, settings.GLOBAL_SETTINGS["topic"] + 1):
+            data = request.POST
+            category = data.get("category_name", "")
+            co = data.get("co", "")
+            # if Question.objects.filter(question=q).first():
+            if Category.objects.filter(name=category_name).first():
+                messages.warning(request, f"{category_name} category already exist")
+                return redirect("add_questions")
+
+            category.save()
+            messages.success(
+                request,
+                f"{count} questions added to category '{category_name}'. Wait until admin verifies them.",
+            )
+        else:
+            messages.warning(request, "Category name cannot be empty")
+
+        if topic_name:
+            # topic, created = Topic.objects.get_or_create(name=topic_name)
+            data = request.POST
+            topic = data.get('topic_name', "")
+            if Topic.objects.filter(name=topic_name).first():
+                messages.warning(request, f"{topic} topic already exist")
+
+            topic.save()
+            messages.success(
+                request,
+                f"{count} questions added to category '{topic_name}'. Wait until admin verifies them.",
+            )
+        else:
+            messages.warning(request, "Category name cannot be empty")
+
+        return redirect("add_questions")
