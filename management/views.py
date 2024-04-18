@@ -75,6 +75,7 @@ class AddQuestion(View):
     def post(self, request):
         count, already_exists = 0, 0
         category_id = request.POST.get("category")
+        image_data = request.FILES.get('image', "")
         if category_id:
             # category, created = Category.objects.get_or_create(name=category_name)
             category, created = Category.objects.get_or_create(id=category_id)
@@ -90,12 +91,22 @@ class AddQuestion(View):
                 if Question.objects.filter(question=q).first():
                     already_exists += 1
                     continue
+
+                # if image_data:
+                #     format_, imgstr = image_data.split(";base64,")
+                #     ext = format_.split('/')[-1]
+                #     image_name = f'question{i}.{ext}'
+                #     image_data = ContentFile(base64.b64decode(imgstr), name=image_name)
+                # else:
+                #     image_data = None
+
                 question = Question(
                     question=q,
                     option1=o1,
                     option2=o2,
                     option3=o3,
                     option4=o4,
+                    image=image_data,
                     correct_option=co,
                     creator=request.user,
                     category=category,
