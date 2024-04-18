@@ -74,9 +74,10 @@ class AddQuestion(View):
 
     def post(self, request):
         count, already_exists = 0, 0
-        category_name = request.POST.get("category")
-        if category_name:
-            category, created = Category.objects.get_or_create(name=category_name)
+        category_id = request.POST.get("category")
+        if category_id:
+            # category, created = Category.objects.get_or_create(name=category_name)
+            category, created = Category.objects.get_or_create(id=category_id)
             for i in range(1, settings.GLOBAL_SETTINGS["questions"] + 1):
                 data = request.POST
                 q = data.get(f"q{i}", "")
@@ -106,7 +107,7 @@ class AddQuestion(View):
                 messages.warning(request, f"{already_exists} questions already exist")
             messages.success(
                 request,
-                f"{count} questions added to category '{category_name}'. Wait until admin verifies them.",
+                f"{count} questions added to category '{category}'. Wait until admin verifies them.",
             )
         else:
             messages.warning(request, "Category name cannot be empty")
@@ -156,7 +157,7 @@ class Setting(View):
             messages.success(request, "You preference saved")
         else:
             messages.warning(request, "Question limit can't be 0 or less than 0")
-        return redirect("setting")
+        return redirect("add_questions")
 
 
 @method_decorator(staff_member_required, name="dispatch")
