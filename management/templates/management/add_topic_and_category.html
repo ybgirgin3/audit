@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Add Category</h5>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="category_name">Category Name:</label>
+                        <input type="text" class="form-control" id="category_name" name="category_name">
+                    </div>
+                    <button type="submit" name="add_category" class="btn btn-primary">Add Category</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Add Topic</h5>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="category">Select Category:</label>
+                        <select class="form-control" id="category" name="category">
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="topic_name">Topic Name:</label>
+                        <input type="text" class="form-control" id="topic_name" name="topic_name">
+                    </div>
+                    <button type="submit" name="add_topic" class="btn btn-primary">Add Topic</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Add Exam</h5>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="topic">Select Topic:</label>
+                        <select class="form-control" id="topic" name="topic">
+                            {% for topic in topics %}
+                                <option value="{{ topic.id }}">{{ topic.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exam_name">Exam Name:</label>
+                        <input type="text" class="form-control" id="exam_name" name="exam_name">
+                    </div>
+                    <button type="submit" name="add_exam" class="btn btn-primary">Add Exam</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
