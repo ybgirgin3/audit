@@ -8,6 +8,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from quiz.models import Mark, Question, Category
 from os.path import join
 
+
 # Create your views here.
 @method_decorator(staff_member_required, name="dispatch")
 class Manage(View):
@@ -15,31 +16,30 @@ class Manage(View):
         panel_options = {
             "Upload Questions": {
                 "link": reverse("upload_question"),
-                "btntxt": "Upload"
+                "btntxt": "Upload",
             },
             "Verify Questions": {
                 "link": reverse("verify_question"),
-                "btntxt": "Verify"
+                "btntxt": "Verify",
             },
-            "Get Results": {
-                "link": reverse("results"),
-                "btntxt": "Get"
-            },
+            "Get Results": {"link": reverse("results"), "btntxt": "Get"},
             "Delete Questions": {
                 "link": reverse("delete_questions"),
-                "btntxt": "Delete"
-            }
+                "btntxt": "Delete",
+            },
         }
         return render(
-            request,
-            "management/manage.html",
-            {"panel_options": panel_options}
+            request, "management/manage.html", {"panel_options": panel_options}
         )
+
 
 @method_decorator(staff_member_required, name="dispatch")
 class Results(View):
     def get(self, request):
-        return render(request, "management/results.html", {"results": Mark.objects.all()})
+        return render(
+            request, "management/results.html", {"results": Mark.objects.all()}
+        )
+
 
 @method_decorator(staff_member_required, name="dispatch")
 class UploadQuestion(View):
@@ -57,26 +57,27 @@ class UploadQuestion(View):
                     f.write(chunk)
             messages.success(request, "CSV file uploaded")
         return redirect("manage")
-    
+
+
 @method_decorator(staff_member_required, name="dispatch")
 class AddQuestion(View):
     def get(self, request):
         categories = Category.objects.all()
         return render(
-            request, 
+            request,
             "management/add_questions.html",
             {
-                "questions": range(1, settings.GLOBAL_SETTINGS["questions"]+1),
-                "categories": categories
-            }
+                "questions": range(1, settings.GLOBAL_SETTINGS["questions"] + 1),
+                "categories": categories,
+            },
         )
-    
+
     def post(self, request):
         count, already_exists = 0, 0
         category_name = request.POST.get("category")
         if category_name:
             category, created = Category.objects.get_or_create(name=category_name)
-            for i in range(1, settings.GLOBAL_SETTINGS["questions"]+1):
+            for i in range(1, settings.GLOBAL_SETTINGS["questions"] + 1):
                 data = request.POST
                 q = data.get(f"q{i}", "")
                 o1 = data.get(f"q{i}o1", "")
@@ -97,16 +98,20 @@ class AddQuestion(View):
                     correct_option=co,
                     creator=request.user,
                     category=category,
-                    risk_level=risk_level
+                    risk_level=risk_level,
                 )
                 question.save()
                 count += 1
             if already_exists:
                 messages.warning(request, f"{already_exists} questions already exist")
-            messages.success(request, f"{count} questions added to category '{category_name}'. Wait until admin verifies them.")
+            messages.success(
+                request,
+                f"{count} questions added to category '{category_name}'. Wait until admin verifies them.",
+            )
         else:
             messages.warning(request, "Category name cannot be empty")
         return redirect("quiz")
+
 
 @method_decorator(staff_member_required, name="dispatch")
 class VerifyQuestion(View):
@@ -132,15 +137,16 @@ class VerifyQuestion(View):
                         question.delete()
                         count_deleted += 1
 
-        messages.success(request, f"{count_added} questions added, {count_deleted} questions deleted")
+        messages.success(
+            request, f"{count_added} questions added, {count_deleted} questions deleted"
+        )
         return redirect("manage")
+
 
 @method_decorator(staff_member_required, name="dispatch")
 class Setting(View):
     def get(self, request):
-        info = {
-            "question_limit": settings.GLOBAL_SETTINGS["questions"]
-        }
+        info = {"question_limit": settings.GLOBAL_SETTINGS["questions"]}
         return render(request, "management/setting.html", {"info": info})
 
     def post(self, request):
@@ -151,15 +157,14 @@ class Setting(View):
         else:
             messages.warning(request, "Question limit can't be 0 or less than 0")
         return redirect("setting")
-    
+
+
 @method_decorator(staff_member_required, name="dispatch")
 class QuizDelete(View):
     def get(self, request):
         questions = Question.objects.filter(verified=True)
         return render(
-            request,
-            "management/delete_questions.html",
-            {"questions": questions}
+            request, "management/delete_questions.html", {"questions": questions}
         )
 
     def post(self, request):
@@ -172,7 +177,5 @@ class QuizDelete(View):
             messages.error(request, "Question not found.")
         questions = Question.objects.filter(verified=True)
         return render(
-            request,
-            "management/delete_questions.html",
-            {"questions": questions}
-        )   
+            request, "management/delete_questions.html", {"questions": questions}
+        )

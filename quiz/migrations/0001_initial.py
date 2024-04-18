@@ -16,94 +16,255 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Category',
+            name="Category",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
             ],
         ),
         migrations.CreateModel(
-            name='Audit',
+            name="Audit",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('description', models.TextField()),
-                ('categories', models.ManyToManyField(related_name='audits', to='quiz.category')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=100)),
+                ("description", models.TextField()),
+                (
+                    "categories",
+                    models.ManyToManyField(related_name="audits", to="quiz.category"),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Question',
+            name="Question",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('question', models.TextField(unique=True)),
-                ('option1', models.CharField(max_length=150)),
-                ('option2', models.CharField(max_length=150)),
-                ('option3', models.CharField(max_length=150)),
-                ('option4', models.CharField(max_length=150)),
-                ('correct_option', models.CharField(max_length=1)),
-                ('image', models.ImageField(blank=True, null=True, upload_to='question_images/')),
-                ('risk_level', models.CharField(choices=[('L', 'Low'), ('M', 'Medium'), ('H', 'High')], default='L', max_length=1)),
-                ('info', models.TextField(blank=True)),
-                ('solution', models.TextField(blank=True)),
-                ('verified', models.BooleanField(default=False)),
-                ('category', models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='quiz.category')),
-                ('creator', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("question", models.TextField(unique=True)),
+                ("option1", models.CharField(max_length=150)),
+                ("option2", models.CharField(max_length=150)),
+                ("option3", models.CharField(max_length=150)),
+                ("option4", models.CharField(max_length=150)),
+                ("correct_option", models.CharField(max_length=1)),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True, null=True, upload_to="question_images/"
+                    ),
+                ),
+                (
+                    "risk_level",
+                    models.CharField(
+                        choices=[("L", "Low"), ("M", "Medium"), ("H", "High")],
+                        default="L",
+                        max_length=1,
+                    ),
+                ),
+                ("info", models.TextField(blank=True)),
+                ("solution", models.TextField(blank=True)),
+                ("verified", models.BooleanField(default=False)),
+                (
+                    "category",
+                    models.ForeignKey(
+                        default=1,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="quiz.category",
+                    ),
+                ),
+                (
+                    "creator",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Mark',
+            name="Mark",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('total', models.IntegerField()),
-                ('got', models.IntegerField(default=0)),
-                ('wrong_answers', models.JSONField(blank=True, null=True)),
-                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
-                ('answered_questions', models.ManyToManyField(blank=True, related_name='marks', to='quiz.question')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("total", models.IntegerField()),
+                ("got", models.IntegerField(default=0)),
+                ("wrong_answers", models.JSONField(blank=True, null=True)),
+                ("created_at", models.DateTimeField(default=django.utils.timezone.now)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "answered_questions",
+                    models.ManyToManyField(
+                        blank=True, related_name="marks", to="quiz.question"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Result',
+            name="Result",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('correct_option', models.BooleanField(default=False)),
-                ('RISK_LEVELS', models.CharField(choices=[('L', 'Low'), ('M', 'Medium'), ('H', 'High')], max_length=10)),
-                ('comments_allowed', models.BooleanField(default=True)),
-                ('question', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='quiz.question')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("correct_option", models.BooleanField(default=False)),
+                (
+                    "RISK_LEVELS",
+                    models.CharField(
+                        choices=[("L", "Low"), ("M", "Medium"), ("H", "High")],
+                        max_length=10,
+                    ),
+                ),
+                ("comments_allowed", models.BooleanField(default=True)),
+                (
+                    "question",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="quiz.question"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='AdminComment',
+            name="AdminComment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('comment', models.TextField()),
-                ('admin', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('result', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='quiz.result')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("comment", models.TextField()),
+                (
+                    "admin",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "result",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="quiz.result"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='UserResponse',
+            name="UserResponse",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('response', models.TextField()),
-                ('comment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='quiz.admincomment')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("response", models.TextField()),
+                (
+                    "comment",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="quiz.admincomment",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='UserAuditProgress',
+            name="UserAuditProgress",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('progress', models.PositiveIntegerField(default=0)),
-                ('started_on', models.DateTimeField(auto_now_add=True)),
-                ('success_rate', models.FloatField(default=0.0)),
-                ('audit', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='quiz.audit')),
-                ('category', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='quiz.category')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("progress", models.PositiveIntegerField(default=0)),
+                ("started_on", models.DateTimeField(auto_now_add=True)),
+                ("success_rate", models.FloatField(default=0.0)),
+                (
+                    "audit",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="quiz.audit"
+                    ),
+                ),
+                (
+                    "category",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="quiz.category"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('user', 'audit', 'category')},
+                "unique_together": {("user", "audit", "category")},
             },
         ),
     ]
