@@ -14,4 +14,5 @@ urlpatterns = [
     ),
     path("delete_questions/", views.QuizDelete.as_view(), name="delete_questions"),
     path("setting/", views.Setting.as_view(), name="setting"),
+    path("get_topics/<int:category_id>/", views.get_topics, name="get_topics"),
 ]
