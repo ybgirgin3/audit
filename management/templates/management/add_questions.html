@@ -6,7 +6,7 @@
     <div class="container mt-5 mb-5">
 <div class="row mt-5">
   <h1 class="text-center">
-    Site Setting
+    Enter the number of questions you want to add
   </h1>
 </div>
 <form action="{% url 'setting' %}" method="post">
@@ -30,12 +30,22 @@
   </h1>
   <br><br>
   <div class="mb-3">
+    <small class="text-muted">Select Category</small>
       <select class="form-select" id="categorySelect" name="category">
               <option selected>Kategori Seç...</option>
               {% for category in categories %}
               <option value="{{ category.id }}" {% if selected_category|stringformat:'s' == category.id|stringformat:'s' %}selected{% endif %}>{{ category.name }}</option>
               {% endfor %}
       </select>
+</div>
+
+  <div class="mb-3">
+ <small class="text-muted">Select Topic</small>
+ <div class="mb-3">
+  <select class="form-select" id="topicSelect" name="topic">
+      <option selected>Konu Seç...</option>
+    
+  </select>
 </div>
   <br><br>
   {% for i in questions %}

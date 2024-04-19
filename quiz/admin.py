@@ -1,5 +1,14 @@
 from django.contrib import admin
-from .models import Category, Question, Mark, Audit, UserAuditProgress, AdminComment,Result
+from .models import (
+    Category,
+    Question,
+    Mark,
+    Audit,
+    UserAuditProgress,
+    AdminComment,
+    Result,
+)
+
 
 class ResultAdmin(admin.ModelAdmin):
     list_display = [
@@ -16,6 +25,7 @@ class ResultAdmin(admin.ModelAdmin):
 
 admin.site.register(Result, ResultAdmin)
 
+
 class AdminCommentAdmin(admin.ModelAdmin):
     list_display = [
         "id",
@@ -28,6 +38,7 @@ class AdminCommentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(AdminComment, AdminCommentAdmin)
+
 
 class QuestionAdmin(admin.ModelAdmin):
     list_display = [
