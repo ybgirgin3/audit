@@ -18,20 +18,29 @@
     <!-- Questions and form on the right side -->
     <div class="col-12">
       <div class="bg-light p-5 border rounded-3">
-        <h1 class="display-5">Bilgi İşlem Değerlendirme Soruları</h1>
+        <h1 class="display-5">Select a Category</h1>
         <p class="lead">
 
-          Bilgi işlem denetim sorularının amacı, bir organizasyonun teknoloji altyapısının ve işlemlerinin, belirlenen standartlar ve yasal gerekliliklere uygun olup olmadığını değerlendirmektir. Bu süreç, sistem güvenliğini, veri bütünlüğünü ve teknolojik kaynakların etkin kullanımını sağlamayı amaçlar.        </p>
-        
         <form method="get" action="{% url 'quiz:quiz' %}" class="mb-3">
-          <div class="input-group mb-3">
-            <label class="input-group-text" for="categorySelect">Kategori Seçin</label>
-            <select class="form-select" id="categorySelect" name="category" onchange="this.form.submit()">
-              <option value=0 selected>Kategori Seç...</option>
+          <div class="input-group mb-3" style="display: flex; justify-content: space-between">
+{#            <label class="input-group-text" for="categorySelect">Kategori Seçin</label>#}
+{#            <select class="form-select" id="categorySelect" name="category" onchange="this.form.submit()">#}
+{#              <option value=0 selected>Kategori Seç...</option>#}
+{#              {% for category in categories %}#}
+{#              <option value="{{ category.id }}" {% if selected_category|stringformat:'s' == category.id|stringformat:'s' %}selected{% endif %}>{{ category.name }}</option>#}
+{#              {% endfor %}#}
+{#            </select>#}
+
               {% for category in categories %}
-              <option value="{{ category.id }}" {% if selected_category|stringformat:'s' == category.id|stringformat:'s' %}selected{% endif %}>{{ category.name }}</option>
-              {% endfor %}
-            </select>
+              <div class="card" style="width: 18rem;">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ category.name }}</h5>
+                    <p class="card-text">Perfect Choice</p>
+                    <a href="#" class="btn btn-primary">Select Now</a>
+                  </div>
+              </div>
+             {% endfor %}
+
           </div>
         </form>
         
