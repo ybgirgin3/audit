@@ -3,6 +3,7 @@ from django.views import View
 from django.urls import reverse
 from django.conf import settings
 from django.contrib import messages
+from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.contrib.admin.views.decorators import staff_member_required
 from quiz.models import Mark, Question, Category, Topic
@@ -247,3 +248,8 @@ class AddCategoryAndTopic(View):
             messages.warning(request, "Category name cannot be empty")
 
         return redirect("add_category_and_topic")
+
+
+def get_topics(request, category_id):
+    topics = Topic.objects.filter(category_id=category_id).values("id", "name")
+    return JsonResponse(list(topics), safe=False)
