@@ -7,6 +7,7 @@ from .models import (
     UserAuditProgress,
     AdminComment,
     Result,
+    Topic,
 )
 
 
@@ -71,6 +72,13 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Category, CategoryAdmin)
+
+
+class TopicAdmin(admin.ModelAdmin):
+    list_display = ["id", "name", "category_id"]
+
+
+admin.site.register(Topic, TopicAdmin)
 
 
 class AuditAdmin(admin.ModelAdmin):
