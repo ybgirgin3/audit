@@ -25,10 +25,8 @@ from django.http import HttpResponse
 class Quiz(View):
     def get(self, request):
         selected_category_id = request.GET.get("category")
-        if selected_category_id:
-            questions = Question.objects.filter(
-                category__id=selected_category_id, verified=True
-            )
+        if selected_category_id and selected_category_id is not 0:
+            questions = Question.objects.filter(category__id=selected_category_id)
         else:
             questions = Question.objects.filter(verified=True)
         categories = Category.objects.all()
@@ -88,27 +86,28 @@ class Quiz(View):
 @method_decorator(login_required, name="dispatch")
 class Result(View):
     def get(self, request):
-        results = Mark.objects.filter(user=request.user).order_by("-created_at")
+        marks = Mark.objects.filter(user=request.user).order_by("-created_at")
+        comments = AdminComment.objects.all()
         category_risk_count = {}
         latest_incorrect_risk_levels = {"High": 0, "Medium": 0, "Low": 0}
         category_completion_data = {}
         categories = Category.objects.all()
 
-        if results.exists():
-            latest_result = results.first()
+        if marks.exists():
+            latest_result = marks.first()
             if latest_result.wrong_answers:
                 for wa in latest_result.wrong_answers:
                     risk_level = wa["risk_level"]
                     latest_incorrect_risk_levels[risk_level] += 1
 
-        for result in results:
-            if result.wrong_answers:
+        for mark in marks:
+            if mark.wrong_answers:
                 questions = Question.objects.in_bulk(
                     list(map(int, [wa["question_id"] for wa in result.wrong_answers]))
                 )
-                result.wrong_answers_details = []
+                mark.wrong_answers_details = []
 
-                for wa in result.wrong_answers:
+                for wa in mark.wrong_answers:
                     question_id = int(wa["question_id"])
                     if question_id in questions:
                         question = questions[question_id]
@@ -129,30 +128,30 @@ class Result(View):
                             }
                         category_risk_count[category][risk_level] += 1
 
-                        result.wrong_answers_details.append(question_details)
+                        mark.wrong_answers_details.append(question_details)
             else:
-                result.wrong_answers_details = []
+                mark.wrong_answers_details = []
 
         for category in categories:
             total_quizzes_in_category = Question.objects.filter(
                 category=category
             ).count()
             completed_quizzes = 0
-            for result in results:
+            for mark in marks:
                 # Here we count how many quizzes in this category have been fully answered without wrong answers
-                if not result.answered_questions.filter(
-                    category=category, marks__in=[result]
+                if not mark.answered_questions.filter(
+                    category=category, marks__in=[mark]
                 ).exists():
-                    continue  # If no questions from this category were answered in this result, skip to the next
+                    continue  # If no questions from this category were answered in this mark, skip to the next
                 # If there are answered questions from this category, check if all of them were answered correctly
                 answered_questions_ids = (
-                    [qa["question_id"] for qa in result.wrong_answers]
-                    if result.wrong_answers
+                    [qa["question_id"] for qa in mark.wrong_answers]
+                    if mark.wrong_answers
                     else []
                 )
                 if all(
                     q.id not in answered_questions_ids
-                    for q in result.answered_questions.filter(category=category)
+                    for q in mark.answered_questions.filter(category=category)
                 ):
                     completed_quizzes += 1
 
@@ -174,7 +173,8 @@ class Result(View):
         )
 
         context = {
-            "results": results,
+            "comments": comments,
+            "marks": marks,
             "category_risk_count_json": category_risk_count_json,
             "latest_incorrect_risk_levels_json": latest_incorrect_risk_levels_json,
             "category_completion_data_json": category_completion_data_json,

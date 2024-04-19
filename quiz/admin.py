@@ -1,6 +1,33 @@
 from django.contrib import admin
-from .models import Category, Question, Mark, Audit, UserAuditProgress
+from .models import Category, Question, Mark, Audit, UserAuditProgress, AdminComment,Result
 
+class ResultAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "user",
+        "question",
+        "correct_option",
+        "RISK_LEVELS",
+        "comments_allowed",
+    ]
+    search_fields = ["user", "question", "correct_option"]
+    list_filter = ("user", "question", "correct_option")
+
+
+admin.site.register(Result, ResultAdmin)
+
+class AdminCommentAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "result",
+        "admin",
+        "comment",
+    ]
+    search_fields = ["result", "admin", "comment"]
+    list_filter = ("result", "admin", "comment")
+
+
+admin.site.register(AdminComment, AdminCommentAdmin)
 
 class QuestionAdmin(admin.ModelAdmin):
     list_display = [

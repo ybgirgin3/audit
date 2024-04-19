@@ -5,7 +5,7 @@
 <!-- Bootstrap CSS -->
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/css/bootstrap.min.css" rel="stylesheet">
 {% endblock %}
-{% block title %}Result{% endblock %}
+{% block title %}Mark{% endblock %}
 
 {% block body %}
 <div class="app-body">
@@ -23,7 +23,7 @@
               <i class="icon-home lh-1"></i>
               <a href="{% url 'index' %}" class="text-decoration-none">Home</a>
             </li>
-            <li class="breadcrumb-item">Risk Results</li>
+            <li class="breadcrumb-item">Risk Marks</li>
             <li class="breadcrumb-item text-light">Overview</li>
           </ol>
           <!-- Breadcrumb end -->
@@ -31,7 +31,7 @@
       </div>
         <div class="card shadow">
             <div class="card-header py-3">
-                <p class="text-primary m-0 fw-bold">Exam Results Overview</p>
+                <p class="text-primary m-0 fw-bold">Exam Marks Overview</p>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -45,12 +45,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for result in results %}
+                            {% for mark in marks %}
                             <tr>
                                 <th scope="row">{{ forloop.counter }}</th>
-                                <td>{{ result.total }}</td>
-                                <td>{{ result.got }}</td>
-                                <td>{{ result.got }}/{{ result.total }}</td>
+                                <td>{{ mark.total }}</td>
+                                <td>{{ mark.got }}</td>
+                                <td>{{ mark.got }}/{{ mark.total }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -72,8 +72,8 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for result in results %}
-                                    {% for wa in result.wrong_answers_details %}
+                                {% for mark in marks %}
+                                    {% for wa in mark.wrong_answers_details %}
                                         <tr class="{{ wa.risk_level|lower }}">
                                             <td>
                                                 <a href="#" data-bs-toggle="modal" data-bs-target="#infoModal{{ forloop.parentloop.counter }}{{ forloop.counter }}">{{ wa.question }}</a>

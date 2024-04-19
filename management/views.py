@@ -75,7 +75,7 @@ class AddQuestion(View):
     def post(self, request):
         count, already_exists = 0, 0
         category_id = request.POST.get("category")
-        image_data = request.FILES.get('image', "")
+        image_data = request.FILES.get("image", "")
         if category_id:
             # category, created = Category.objects.get_or_create(name=category_name)
             category, created = Category.objects.get_or_create(id=category_id)
@@ -232,7 +232,7 @@ class AddCategoryAndTopic(View):
         if topic_name:
             # topic, created = Topic.objects.get_or_create(name=topic_name)
             data = request.POST
-            topic = data.get('topic_name', "")
+            topic = data.get("topic_name", "")
             if Topic.objects.filter(name=topic_name).first():
                 messages.warning(request, f"{topic} topic already exist")
 

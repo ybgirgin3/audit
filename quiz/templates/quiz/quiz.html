@@ -27,7 +27,7 @@
           <div class="input-group mb-3">
             <label class="input-group-text" for="categorySelect">Kategori Seçin</label>
             <select class="form-select" id="categorySelect" name="category" onchange="this.form.submit()">
-              <option selected>Kategori Seç...</option>
+              <option value=0 selected>Kategori Seç...</option>
               {% for category in categories %}
               <option value="{{ category.id }}" {% if selected_category|stringformat:'s' == category.id|stringformat:'s' %}selected{% endif %}>{{ category.name }}</option>
               {% endfor %}
