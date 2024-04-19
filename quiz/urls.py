@@ -12,4 +12,6 @@ urlpatterns = [
     path(
         "audits/start/<int:audit_id>/", views.StartAudit.as_view(), name="start_audit"
     ),
+    path("topics/<str:category_name>", views.redirect_to_topic, name='redirect_to_topic'),
+    path("questions/<str:topic_name>", views.redirect_to_questions, name='redirect_to_questions')
 ]

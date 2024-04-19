@@ -19,22 +19,12 @@
     <div class="col-12">
       <div class="bg-light p-5 border rounded-3">
         <h1 class="display-5">Select a Category</h1>
-        <p class="lead">
-
-        <form method="get" action="{% url 'quiz:quiz' %}" class="mb-3">
+        <form method="get" action="{% url 'quiz:quiz' %}" class="mb-3 form-content">
           <div class="input-group mb-3" style="display: flex; justify-content: space-between">
-{#            <label class="input-group-text" for="categorySelect">Kategori Seçin</label>#}
-{#            <select class="form-select" id="categorySelect" name="category" onchange="this.form.submit()">#}
-{#              <option value=0 selected>Kategori Seç...</option>#}
-{#              {% for category in categories %}#}
-{#              <option value="{{ category.id }}" {% if selected_category|stringformat:'s' == category.id|stringformat:'s' %}selected{% endif %}>{{ category.name }}</option>#}
-{#              {% endfor %}#}
-{#            </select>#}
-
               {% for category in categories %}
               <div class="card" style="width: 18rem;">
                   <div class="card-body">
-                    <h5 class="card-title">{{ category.name }}</h5>
+                    <div class="card-title">{{ category.name }}</div>
                     <p class="card-text">Perfect Choice</p>
                     <a href="#" class="btn btn-primary">Select Now</a>
                   </div>
@@ -47,7 +37,7 @@
         {% if questions %}
         <form method="post" action="{% url 'quiz:quiz' %}" class="needs-validation" novalidate>
           {% csrf_token %}
-          
+
           <!-- Display questions for the selected category -->
           {% for q in questions %}
           <div class="card mb-4">
@@ -77,7 +67,7 @@
             </div>
           </div>
           {% endfor %}
-          
+
           <div class="d-flex justify-content-between align-items-center">
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="confirmCheck" required>
@@ -95,4 +85,87 @@
     </div>
   </div>
 </div>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Tüm butonları al
+    var buttons = document.querySelectorAll('.card .btn-primary');
+
+    // Her bir buton için tıklama olayını dinle
+    buttons.forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); // Formun gönderilmesini engelle
+
+            // Seçili kategori adını al
+            var categoryName = this.parentNode.querySelector('.card-title').textContent;
+
+            // AJAX isteği gönder
+            var xhr = new XMLHttpRequest();
+            var encoded_val = encodeURIComponent(categoryName);
+            console.log("encoded val in get", encoded_val)
+            xhr.open('GET', 'http://127.0.0.1:8000/quiz/topics/' + encoded_val);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // AJAX yanıtını al
+                    var data = JSON.parse(xhr.responseText);
+                    console.log("data", data)
+
+                    // Form içeriğini güncelle
+                    var form = document.querySelector('.form-content');
+
+                    form.innerHTML = ``;
+
+                    data.forEach(function(item) {
+                        var card = document.createElement('div');
+                        card.className = 'card';
+                        var cardBody = document.createElement('div');
+                        cardBody.className = 'card-body';
+                        var itemElement = document.createElement('div');
+                        itemElement.className = 'card-title';
+                        itemElement.textContent = item.name;
+                        var textElement = document.createElement('p');
+                        textElement.className = 'card-text';
+                        textElement.textContent = "Perfect Choice";
+                        var buttonElement = document.createElement('a');
+                        buttonElement.className = 'btn btn-primary';
+                        buttonElement.textContent = 'Select' + item.name + 'Now';
+
+                        // Append elements to card
+                        cardBody.appendChild(itemElement);
+                        cardBody.appendChild(textElement);
+                        cardBody.appendChild(buttonElement);
+                        card.appendChild(cardBody);
+
+                        // Append card to form
+                        form.appendChild(card);
+
+                        buttonElement.addEventListener('click', function(event) {
+                            event.preventDefault();
+
+                            var categoryName = this.parentNode.querySelector('.card-title').textContent;
+
+                            // AJAX isteği gönder
+                            var xhr = new XMLHttpRequest();
+                            var encoded_val = encodeURIComponent(categoryName);
+                            console.log("encoded val in get", encoded_val)
+                            xhr.open('GET', 'http://127.0.0.1:8000/quiz/topics/' + encoded_val);
+                            xhr.onload = function() {
+                                if (xhr.status === 200) {
+                                    // AJAX yanıtını al
+                                    var data = JSON.parse(xhr.responseText);
+                                    console.log("data", data)
+                
+                                    // Redirect to a specific URL with the response data
+                                    window.location.href = 'http://127.0.0.1:8000/quiz/question/' + encoded_val;
+                                }
+                            };
+                            xhr.send();
+                        });
+                    });
+                }
+            };
+            xhr.send();
+        });
+    });
+});
+</script>
 {% endblock %}

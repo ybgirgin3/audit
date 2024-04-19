@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+from django.http import JsonResponse
 from .models import (
     Question,
     Mark,
     Category,
+    Topic,
     Audit,
     UserAuditProgress,
     UserResponse,
@@ -295,3 +297,15 @@ def denetim_view(request):
 
     # 'denetim.html' şablonunu yönetici yorumları ile birlikte render eder
     return render(request, "quiz:audits_list", {"comments": admin_comments})
+
+
+def redirect_to_topic(request, category_name):
+    cat_id = Category.objects.filter(name=category_name).values_list('pk', flat=True)
+    topics = Topic.objects.filter(category_id=list(cat_id)[0]).values("id", "name")
+    return JsonResponse(list(topics), safe=False)
+
+
+def redirect_to_questions(request, topic_name):
+    top_id = Topic.objects.filter(name=topic_name).values_list('pk', flat=True)
+    questions = Question.objects.filter(category_id=list(top_id)[0]).values("id", "name")
+    return JsonResponse(list(questions), safe=False)

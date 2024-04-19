@@ -32,6 +32,7 @@ class Question(models.Model):
     )  # Soru için resim (opsiyonel)
     creator = models.ForeignKey(to=User, on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, default=1)
     RISK_LEVELS = [
         ("L", "Low"),
         ("M", "Medium"),
