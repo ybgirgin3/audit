@@ -30,23 +30,22 @@
   </h1>
   <br><br>
   <div class="mb-3">
+      <form method="post">
     <small class="text-muted">Select Category</small>
-      <select class="form-select" id="categorySelect" name="category">
+          <select class="form-select" id="categorySelect" name="category">
               <option selected>Kategori Seç...</option>
               {% for category in categories %}
-              <option value="{{ category.id }}" {% if selected_category|stringformat:'s' == category.id|stringformat:'s' %}selected{% endif %}>{{ category.name }}</option>
+            <option value="{{ category.id }}">{{ category.name }}</option>
               {% endfor %}
       </select>
-</div>
-
-  <div class="mb-3">
+      <br>
  <small class="text-muted">Select Topic</small>
  <div class="mb-3">
-  <select class="form-select" id="topicSelect" name="topic">
-      <option selected>Konu Seç...</option>
-    
-  </select>
+    <select id="topicSelect" class="form-select">
+        <option value="">Select Topic</option>
+    </select>
 </div>
+      </form>
   <br><br>
   {% for i in questions %}
   <div class="mb-3">
@@ -81,10 +80,11 @@
         <option value="H">High</option>
     </select>
   </div>
-                      <div class="mb-3">
-                    <label for="InputImage{{ i }}" class="form-label">Image:</label>
-                    <input type="file" class="form-control" id="InputImage{{ i }}" name="image" accept="image/*" enctype="multipart/form-data>
-                </div>
+      <div class="mb-3">
+          <label for="InputImage{{ i }}" class="form-label">Image:</label>
+          <input type="file" class="form-control" id="InputImage{{ i }}" name="image" accept="image/*"
+                 enctype="multipart/form-data">
+      </div>
   {% endfor %}
   <br>
   <div class="mb-3 form-check">
@@ -95,6 +95,33 @@
   </div>
   <br><br><br>
   <button type="submit" class="btn btn-info w-100">Submit</button>
+  </div>
 </form>
 </div>
+    <script>
+    document.getElementById('categorySelect').addEventListener('change', function() {
+        var categoryId = this.value;
+        var topicSelect = document.getElementById('topicSelect');
+
+        // Clear previous options
+        topicSelect.innerHTML = '<option value="">Select Topic</option>';
+        topicSelect.disabled = true;
+
+        if (categoryId) {
+            // Fetch topics based on selected category
+            fetch('http://127.0.0.1:8000/management/get_topics/' + categoryId)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(topic => {
+                        var option = document.createElement('option');
+                        option.text = topic.name;
+                        option.value = topic.id;
+                        topicSelect.appendChild(option);
+                    });
+                    topicSelect.disabled = false;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+    </script>
 {% endblock %}
