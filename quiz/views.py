@@ -25,7 +25,7 @@ from django.http import HttpResponse
 class Quiz(View):
     def get(self, request):
         selected_category_id = request.GET.get("category")
-        if selected_category_id and selected_category_id is not 0:
+        if selected_category_id and selected_category_id != 0:
             questions = Question.objects.filter(category__id=selected_category_id)
         else:
             questions = Question.objects.filter(verified=True)
