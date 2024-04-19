@@ -43,7 +43,7 @@ class Question(models.Model):
 
     def __str__(self):
         return f"Question({self.question}, {self.creator})"
-    
+
     @property
     def content(self):
         return self.__str__
@@ -65,7 +65,7 @@ class Mark(models.Model):
         return f"Mark({self.got}/{self.total}, {self.user})"
 
 
-class Result(models.Model):             #TODO: Change this Result name to QuestionResult.
+class Result(models.Model):  # TODO: Change this Result name to QuestionResult.
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Sonucu olan kullanıcı
     question = models.ForeignKey(Question, on_delete=models.CASCADE)  # İlgili soru
     correct_option = models.BooleanField(default=False)  # Cevabın doğruluğu
@@ -83,6 +83,8 @@ class Result(models.Model):             #TODO: Change this Result name to Questi
     @property
     def is_correct(self):
         return self.correct_option
+
+
 class AdminComment(models.Model):
     result = models.ForeignKey(Result, on_delete=models.CASCADE)  # İlgili sonuç
     admin = models.ForeignKey(User, on_delete=models.CASCADE)  # Yorumu yapan admin
