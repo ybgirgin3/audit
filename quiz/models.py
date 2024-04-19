@@ -13,7 +13,7 @@ class Category(models.Model):
 
 class Topic(models.Model):
     name = models.CharField(max_length=100)
-    category_id = models.IntegerField(verbose_name='category_id')
+    category_id = models.IntegerField(verbose_name="category_id")
 
     def __str__(self):
         return self.name
